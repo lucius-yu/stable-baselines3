@@ -14,6 +14,8 @@ from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, Schedul
 from stable_baselines3.common.utils import get_linear_fn, get_parameters_by_name, is_vectorized_observation, polyak_update
 from stable_baselines3.dqn.policies import CnnPolicy, DQNPolicy, MlpPolicy, MultiInputPolicy
 
+from stable_baselines3.common.rlran_utils import mask_q_values, is_allowed_action
+
 DQNSelf = TypeVar("DQNSelf", bound="DQN")
 
 
@@ -198,6 +200,9 @@ class DQN(OffPolicyAlgorithm):
             with th.no_grad():
                 # Compute the next Q-values using the target network
                 next_q_values = self.q_net_target(replay_data.next_observations)
+                # eyulush: mask some q values
+                next_q_values = mask_q_values(replay_data.next_observations, next_q_values)
+
                 # Follow greedy policy: use the one with the highest value
                 next_q_values, _ = next_q_values.max(dim=1)
                 # Avoid potential broadcast issue
@@ -246,15 +251,20 @@ class DQN(OffPolicyAlgorithm):
             (used in recurrent policies)
         """
         if not deterministic and np.random.rand() < self.exploration_rate:
-            if is_vectorized_observation(maybe_transpose(observation, self.observation_space), self.observation_space):
-                if isinstance(self.observation_space, gym.spaces.Dict):
-                    n_batch = observation[list(observation.keys())[0]].shape[0]
+            action = None
+            self.logger.info(is_allowed_action(observation, action))
+            while(is_allowed_action(observation, action)==False):
+                if is_vectorized_observation(maybe_transpose(observation, self.observation_space), self.observation_space):
+                    if isinstance(self.observation_space, gym.spaces.Dict):
+                        n_batch = observation[list(observation.keys())[0]].shape[0]
+                    else:
+                        n_batch = observation.shape[0]
+                    action = np.array([self.action_space.sample() for _ in range(n_batch)])
                 else:
-                    n_batch = observation.shape[0]
-                action = np.array([self.action_space.sample() for _ in range(n_batch)])
-            else:
-                action = np.array(self.action_space.sample())
+                    action = np.array(self.action_space.sample())
+            self.logger.info(f'Random action {action} selected')
         else:
+            self.logger.info(f'Predict the best action')
             action, state = self.policy.predict(observation, state, episode_start, deterministic)
         return action, state
 

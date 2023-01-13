@@ -13,7 +13,9 @@ from stable_baselines3.common.torch_layers import (
     create_mlp,
 )
 from stable_baselines3.common.type_aliases import Schedule
+from stable_baselines3.common.rlran_utils import mask_q_values
 
+import logging
 
 class QNetwork(BasePolicy):
     """
@@ -67,6 +69,12 @@ class QNetwork(BasePolicy):
 
     def _predict(self, observation: th.Tensor, deterministic: bool = True) -> th.Tensor:
         q_values = self(observation)
+
+        # eyulush: mask some q_values for rlran
+        logging.info(f'q_values and argmax before mask: {q_values}, {q_values.argmax(dim=1).reshape(-1)}')
+        q_values = mask_q_values(observation, q_values)
+        logging.info(f'q_values and argmax after  mask: {q_values}, {q_values.argmax(dim=1).reshape(-1)}')
+
         # Greedy action
         action = q_values.argmax(dim=1).reshape(-1)
         return action
