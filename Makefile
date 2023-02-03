@@ -1,5 +1,6 @@
 SHELL=/bin/bash
 LINT_PATHS=stable_baselines3/ tests/ docs/conf.py setup.py
+OUTPUT_DIR=/home/eyulush/repos/gitlab-internal/rl-enablers-and-use-case-work-in-cn-ran/rlran-server/rlran-docker/dist
 
 pytest:
 	./scripts/run_tests.sh
@@ -47,6 +48,9 @@ docker-cpu:
 docker-gpu:
 	USE_GPU=True ./scripts/build_docker.sh
 
+build: 
+	python3 setup.py bdist_wheel -d $(OUTPUT_DIR)
+
 # PyPi package release
 release:
 	python setup.py sdist
@@ -59,4 +63,4 @@ test-release:
 	python setup.py bdist_wheel
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
-.PHONY: clean spelling doc lint format check-codestyle commit-checks
+.PHONY: clean spelling doc lint format check-codestyle commit-checks build

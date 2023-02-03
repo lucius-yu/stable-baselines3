@@ -71,9 +71,9 @@ class QNetwork(BasePolicy):
         q_values = self(observation)
 
         # eyulush: mask some q_values for rlran
-        logging.info(f'q_values and argmax before mask: {q_values}, {q_values.argmax(dim=1).reshape(-1)}')
+        logging.debug(f'q_values and argmax before mask: {q_values}, {q_values.argmax(dim=1).reshape(-1)}')
         q_values = mask_q_values(observation, q_values)
-        logging.info(f'q_values and argmax after  mask: {q_values}, {q_values.argmax(dim=1).reshape(-1)}')
+        logging.debug(f'q_values and argmax after  mask: {q_values}, {q_values.argmax(dim=1).reshape(-1)}')
 
         # Greedy action
         action = q_values.argmax(dim=1).reshape(-1)
