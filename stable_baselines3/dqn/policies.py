@@ -260,7 +260,6 @@ class CnnPolicy(DQNPolicy):
             optimizer_kwargs,
         )
 
-
 class MultiInputPolicy(DQNPolicy):
     """
     Policy class for DQN when using dict observations as input.

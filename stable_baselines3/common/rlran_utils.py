@@ -84,3 +84,19 @@ def is_allowed_action(
         return all([mask[act] for act in action]) if len(action) > 0 else False
     else:
         return mask[action]
+
+def get_ewma(beta=0.9, auto_correction=True):
+    t = 0  # time steps
+    A = 0  # ewma value
+    beta = beta
+    correction = auto_correction
+    def ewma(v):
+        nonlocal t, A, correction
+        t += 1
+        A = beta*A + (1-beta)*v
+        if correction: 
+            correction = beta**t > 0.001
+            return A/(1-beta**t)
+        else:
+            return A
+    return ewma
