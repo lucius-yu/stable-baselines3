@@ -124,6 +124,12 @@ def is_allowed_action(observation: Union[np.ndarray, Dict[Union[str, int], np.nd
         print(f"Warning: mask_q_values only support observation as type np.ndarray, not {type(observation)}")
         return True
 
+    observation = np.squeeze(observation)
+
+    if observation.ndim > 1:
+        print(f"Warning: observation dim > 1, return True. observation : {observation}")
+        return True
+
     # get mask from observation
     mask = get_mask(observation)
     # return masked action
