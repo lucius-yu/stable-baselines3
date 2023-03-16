@@ -18,7 +18,7 @@ from stable_baselines3.common.type_aliases import GymEnv, Schedule, TensorDict, 
 # mask q value only when RLRAN_ENV_ID == 'rlran-ifaas-v0'
 RLRAN_ENV_ID = os.environ.get("RLRAN_ENV_ID", "")
 
-def get_mask(observations: Union[np.ndarray, list]):
+def get_mask(observations: Union[np.ndarray, th.Tensor, list]):
     apps = ['amf', 'cellf', 'ngf', 'uef', 'uplane']
     action_params = [ { "action": "None", "service_types": "None" },
             { "action": "up", "service_types": [ "amf" ] },
@@ -72,7 +72,7 @@ def get_mask(observations: Union[np.ndarray, list]):
         return np.array(get_single_mask(observations[8:13]))
 
 # mask q values function
-def mask_q_values(batch_observations: Union[np.ndarray, Dict[Union[str, int], np.ndarray]], batch_q_values: th.Tensor) -> th.Tensor:
+def mask_q_values(batch_observations: Union[np.ndarray, th.Tensor], batch_q_values: th.Tensor) -> th.Tensor:
     """
     Fetch mask information from obs, then mask out some q values and return
 
@@ -85,9 +85,9 @@ def mask_q_values(batch_observations: Union[np.ndarray, Dict[Union[str, int], np
         print("Warning: mask_q_values only support gym env rlran-ifaas-v0")
         return batch_q_values
 
-    if type(batch_observations) != np.ndarray:
-        print(f"Warning: mask_q_values only support observation as type np.ndarray. batch_observations type: {type(batch_observations)}")
-        print(f"batch_observations : {type(batch_observations)}")
+    if type(batch_observations) != np.ndarray and type(batch_observations) != th.Tensor:
+        print(f"Warning: mask_q_values only support observation as type np.ndarray or torch.Tensor. batch_observations type: {type(batch_observations)}")
+        print(f"batch_observations : {batch_observations}")
         return batch_q_values
 
     # mask q values with min of q values for actions which is not possible to execute
