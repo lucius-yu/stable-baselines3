@@ -86,7 +86,8 @@ def mask_q_values(batch_observations: Union[np.ndarray, Dict[Union[str, int], np
         return batch_q_values
 
     if type(batch_observations) != np.ndarray:
-        print("Warning: mask_q_values only support observation as type np.ndarray")
+        print(f"Warning: mask_q_values only support observation as type np.ndarray. batch_observations type: {type(batch_observations)}")
+        print(f"batch_observations : {type(batch_observations)}")
         return batch_q_values
 
     # mask q values with min of q values for actions which is not possible to execute
