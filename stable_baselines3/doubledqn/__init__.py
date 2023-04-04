@@ -1,1 +1,1 @@
-from stable_baselines3.ddqn.doubledqn import DoubleDQN
+from stable_baselines3.doubledqn.doubledqn import DoubleDQN

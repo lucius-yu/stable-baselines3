@@ -4,7 +4,7 @@ import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
 
-from stable_baselines3 import DQN
+from stable_baselines3 import DoubleDQN
 from stable_baselines3.common.evaluation import evaluate_policy
      
 
@@ -13,7 +13,7 @@ env = gym.make(gym_name)
 
 tensorboard_log = "data/tb/"
 
-dqn_model = DQN("MlpPolicy",
+dqn_model = DoubleDQN("MlpPolicy",
             env,
             verbose=1,
             train_freq=16,
