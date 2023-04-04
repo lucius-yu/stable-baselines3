@@ -9,6 +9,7 @@ from stable_baselines3.ppo import PPO
 from stable_baselines3.sac import SAC
 from stable_baselines3.td3 import TD3
 from stable_baselines3.doubledqn import DoubleDQN
+from stable_baselines3.duelingdqn import DuelingDQN
 
 
 # Read version from file
