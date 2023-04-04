@@ -267,7 +267,7 @@ class DQN(OffPolicyAlgorithm):
             unscaled_action = np.array([self.action_space.sample() for _ in range(n_envs)])
             while(is_allowed_action(self._last_obs, unscaled_action)==False):
                 unscaled_action = np.array([self.action_space.sample() for _ in range(n_envs)])
-            self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} Random action {unscaled_action} selected')
+            # self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} Random action {unscaled_action} selected')
         else:
             # Note: when using continuous actions,
             # we assume that the policy uses tanh to scale the action
@@ -312,7 +312,7 @@ class DQN(OffPolicyAlgorithm):
         """
         if not deterministic and np.random.rand() < self.exploration_rate:
             action = None
-            self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} is_allowed_action={is_allowed_action(observation, action)}')
+            # self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} is_allowed_action={is_allowed_action(observation, action)}')
             while(is_allowed_action(observation, action)==False):
                 if is_vectorized_observation(maybe_transpose(observation, self.observation_space), self.observation_space):
                     if isinstance(self.observation_space, gym.spaces.Dict):
@@ -322,10 +322,10 @@ class DQN(OffPolicyAlgorithm):
                     action = np.array([self.action_space.sample() for _ in range(n_batch)])
                 else:
                     action = np.array(self.action_space.sample())
-            self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} Random action {action} selected')
+            # self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} Random action {action} selected')
         else:
             action, state = self.policy.predict(observation, state, episode_start, deterministic)
-            self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} Predict the best action = {action}')
+            # self.logger.info(f'{basename(__file__)}:{sys._getframe().f_lineno} Predict the best action = {action}')
         return action, state
 
     def learn(

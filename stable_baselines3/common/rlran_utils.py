@@ -15,6 +15,9 @@ import stable_baselines3 as sb3
 from stable_baselines3.common.logger import Logger, configure
 from stable_baselines3.common.type_aliases import GymEnv, Schedule, TensorDict, TrainFreq, TrainFrequencyUnit
 
+import logging
+logging.basicConfig(format='%(asctime)s,%(msecs)03d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.INFO)
+
 # mask q value only when RLRAN_ENV_ID == 'rlran-ifaas-v0'
 RLRAN_ENV_ID = os.environ.get("RLRAN_ENV_ID", "")
 
@@ -82,12 +85,12 @@ def mask_q_values(batch_observations: Union[np.ndarray, th.Tensor], batch_q_valu
     """
     # return q values directly if env is not rlran-ifaas-v0
     if RLRAN_ENV_ID != 'rlran-ifaas-v0':
-        print("Warning: mask_q_values only support gym env rlran-ifaas-v0")
+        logging.debug("Warning: mask_q_values only support gym env rlran-ifaas-v0")
         return batch_q_values
 
     if type(batch_observations) != np.ndarray and type(batch_observations) != th.Tensor:
-        print(f"Warning: mask_q_values only support observation as type np.ndarray or torch.Tensor. batch_observations type: {type(batch_observations)}")
-        print(f"batch_observations : {batch_observations}")
+        logging.debug(f"Warning: mask_q_values only support observation as type np.ndarray or torch.Tensor. batch_observations type: {type(batch_observations)}")
+        logging.debug(f"batch_observations : {batch_observations}")
         return batch_q_values
 
     # mask q values with min of q values for actions which is not possible to execute
@@ -118,17 +121,17 @@ def is_allowed_action(observation: Union[np.ndarray, Dict[Union[str, int], np.nd
 
     # return q values directly if env is not rlran-ifaas-v0
     if RLRAN_ENV_ID != 'rlran-ifaas-v0':
-        print(f"Warning: mask_q_values only support gym env rlran-ifaas-v0, not {RLRAN_ENV_ID}")
+        logging.debug(f"Warning: mask_q_values only support gym env rlran-ifaas-v0, not {RLRAN_ENV_ID}")
         return True
 
     if type(observation) != np.ndarray:
-        print(f"Warning: mask_q_values only support observation as type np.ndarray, not {type(observation)}")
+        logging.debug(f"Warning: mask_q_values only support observation as type np.ndarray, not {type(observation)}")
         return True
 
     observation = np.squeeze(observation)
 
     if observation.ndim > 1:
-        print(f"Warning: observation dim > 1, return True. observation : {observation}")
+        logging.debug(f"Warning: observation dim > 1, return True. observation : {observation}")
         return True
 
     # get mask from observation

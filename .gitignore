@@ -1,3 +1,7 @@
+# personal ignore
+dev/data/
+
+# original ignore
 *.swp
 *.pyc
 *.pkl
