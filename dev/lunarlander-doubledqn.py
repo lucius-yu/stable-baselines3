@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 
 from stable_baselines3 import DoubleDQN
 from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.callbacks import EvalCallback
+
      
 
 gym_name = "LunarLander-v2"
@@ -30,9 +32,10 @@ dqn_model = DoubleDQN("MlpPolicy",
             tensorboard_log=tensorboard_log,
             seed=2)
 
-mean_reward, std_reward = evaluate_policy(dqn_model, dqn_model.get_env(), deterministic=True, n_eval_episodes=20)
-print(f"mean_reward:{mean_reward:.2f} +/- {std_reward:.2f}")
+eval_env = gym.make(gym_name)
+eval_callback = EvalCallback(eval_env, best_model_save_path="./logs/",
+                             log_path="./logs/", eval_freq=20000,
+                             deterministic=True, render=False)
 
-dqn_model.learn(int(2e5), log_interval=10)
-mean_reward, std_reward = evaluate_policy(dqn_model, dqn_model.get_env(), deterministic=True, n_eval_episodes=20)
-print(f"mean_reward:{mean_reward:.2f} +/- {std_reward:.2f}")
+N = 200000
+dqn_model.learn(int(N), log_interval=10, callback=eval_callback)
