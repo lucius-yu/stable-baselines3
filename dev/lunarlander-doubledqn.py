@@ -15,7 +15,7 @@ env = gym.make(gym_name)
 
 tensorboard_log = "data/tb/"
 
-dqn_model = DoubleDQN("MlpPolicy",
+model = DoubleDQN("MlpPolicy",
             env,
             verbose=1,
             train_freq=16,
@@ -34,8 +34,8 @@ dqn_model = DoubleDQN("MlpPolicy",
 
 eval_env = gym.make(gym_name)
 eval_callback = EvalCallback(eval_env, best_model_save_path="./logs/",
-                             log_path="./logs/", eval_freq=20000,
+                             log_path="./logs/", eval_freq=10000,
                              deterministic=True, render=False)
 
-N = 200000
-dqn_model.learn(int(N), log_interval=10, callback=eval_callback)
+N = 300000
+model.learn(int(N), log_interval=10, callback=eval_callback)

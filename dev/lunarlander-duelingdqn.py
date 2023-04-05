@@ -4,18 +4,17 @@ import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
 
-from stable_baselines3 import DQN
+from stable_baselines3 import DuelingDQN
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import EvalCallback
 
      
-
 gym_name = "LunarLander-v2"
 env = gym.make(gym_name)
 
 tensorboard_log = "data/tb/"
 
-model = DQN("MlpPolicy",
+model = DuelingDQN("MlpPolicy",
             env,
             verbose=1,
             train_freq=16,
@@ -37,5 +36,5 @@ eval_callback = EvalCallback(eval_env, best_model_save_path="./logs/",
                              log_path="./logs/", eval_freq=10000,
                              deterministic=True, render=False)
 
-N = 300000
+N = 500000
 model.learn(int(N), log_interval=10, callback=eval_callback)
